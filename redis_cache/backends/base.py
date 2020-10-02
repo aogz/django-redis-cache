@@ -266,6 +266,17 @@ class BaseRedisCache(BaseCache):
         """
         return self._get(client, key, default)
 
+    def _keys(self, client, pattern):
+        return client.keys(pattern)
+
+    @get_client()
+    def keys(self, client, pattern):
+        """Retrieve a list of keys matching given pattern.
+
+        Returns a list of strings
+        """
+        return self._keys(client, pattern)
+
     def _set(self, client, key, value, timeout, _add_only=False):
         if timeout is not None and timeout < 0:
             return False
