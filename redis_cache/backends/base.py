@@ -374,19 +374,31 @@ class BaseRedisCache(BaseCache):
         return client.exists(key)
 
     @get_client()
-    def ttl(self, client, key):
+    def ttl(self, client, key, _native_values=False):
         """Returns the 'time-to-live' of a key.  If the key is not volatile,
         i.e. it has not set expiration, then the value returned is None.
         Otherwise, the value is the number of seconds remaining.  If the key
         does not exist, 0 is returned.
         """
         ttl = client.ttl(key)
+
+        if _native_values:
+            return ttl
+
         if ttl == KEY_NON_VOLATILE:
             return None
         elif ttl == KEY_EXPIRED:
             return 0
         else:
             return ttl
+    
+    @get_client()
+    def get_native_ttl(self, client, key):
+        """Returns the native 'time-to-live' of a key. 
+        By native is meant value returned from redis-py starting from version 3.0
+        If key is expired -1 will be returned, if key doesn't exist -2 will be returned.
+        """
+        return self.ttl(client, key, _native_values=True)
 
     def _delete_pattern(self, client, pattern):
         keys = list(client.scan_iter(match=pattern))
