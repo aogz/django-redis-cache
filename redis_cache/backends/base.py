@@ -393,7 +393,7 @@ class BaseRedisCache(BaseCache):
             return ttl
     
     @get_client()
-    def get_native_ttl(self, client, key):
+    def native_ttl(self, client, key):
         """Returns the native 'time-to-live' of a key. 
         By native is meant value returned from redis-py starting from version 3.0
         If key is expired -1 will be returned, if key doesn't exist -2 will be returned.
